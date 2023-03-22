@@ -1,0 +1,33 @@
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: auth-service
+          uri: lb://authservice
+          predicates:
+            - Path=/authservice/**
+          filters:
+            - RewritePath=/authservice/(?<path>.*), /$\{path}
+        - id: order-service
+          uri: lb://orderservice
+          predicates:
+            - Path=/orderservice/**
+          filters:
+            - RewritePath=/orderservice/(?<path>.*), /$\{path}
+        - id: user-service
+          uri: lb://userservice
+          predicates:
+            - Path=/userservice/**
+          filters:
+            - RewritePath=/userservice/(?<path>.*), /$\{path}
+        - id: openapi
+          uri: http://localhost:${server.port}
+          predicates:
+            - Path=/v3/api-docs/**
+          filters:
+            - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
+
+
