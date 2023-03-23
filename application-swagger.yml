@@ -6,23 +6,23 @@ spring:
           enabled: true
       routes:
         - id: auth-service
-          uri: lb://authservice
+          uri: lb://auth-service
           predicates:
-            - Path=/authservice/**
+            - Path=/auth-service/**
           filters:
-            - RewritePath=/authservice/(?<path>.*), /$\{path}
+            - RewritePath=/auth/(?<path>.*), /$\{path}
         - id: order-service
-          uri: lb://orderservice
+          uri: lb://order-service
           predicates:
-            - Path=/orderservice/**
+            - Path=/order/**
           filters:
-            - RewritePath=/orderservice/(?<path>.*), /$\{path}
+            - RewritePath=/order/(?<path>.*), /$\{path}
         - id: user-service
-          uri: lb://userservice
+          uri: lb://user-service
           predicates:
-            - Path=/userservice/**
+            - Path=/user/**
           filters:
-            - RewritePath=/userservice/(?<path>.*), /$\{path}
+            - RewritePath=/user/(?<path>.*), /$\{path}
         - id: openapi
           uri: http://localhost:${server.port}
           predicates:
