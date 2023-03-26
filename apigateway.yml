@@ -9,16 +9,16 @@ spring:
       enabled: always
   cloud:
     gateway:
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins: "http://localhost:8765"
-            allowedHeaders: "*"
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
+#      globalcors:
+#        corsConfigurations:
+#          '[/**]':
+#            allowedOrigins: "http://localhost:8765"
+#            allowedHeaders: "*"
+#            allowedMethods:
+#              - GET
+#              - POST
+#              - PUT
+#              - DELETE
       discovery:
         locator:
           enabled: true
@@ -29,25 +29,45 @@ spring:
           predicates:
             - Path=/auth/**
           filters:
+            - TokenRelay=
             - RewritePath=/auth/(?<path>.*), /$\{path}
         - id: order-service
           uri: lb://order-service
           predicates:
             - Path=/order/**
           filters:
+            - TokenRelay=
             - RewritePath=/order/(?<path>.*), /$\{path}
         - id: user-service
           uri: lb://user-service
           predicates:
             - Path=/user/**
           filters:
+            - TokenRelay=
             - RewritePath=/user/(?<path>.*), /$\{path}
         - id: openapi
           uri: http://localhost:${server.port}
           predicates:
             - Path=/v3/api-docs/**
           filters:
+            - TokenRelay=
             - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
+
+  security:
+    oauth2:
+      client:
+        registration:
+          gateway:
+            provider: my-provider
+            client-id: my_client
+            client-secret: mit8MZr6911qdZjxLUfr930DA8NWMJo9
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://localhost:8765/login/oauth2/code/{registrationId}"
+            scope: openid, movebox.read
+        provider:
+          my-provider:
+            issuer-uri: http://localhost:8080/realms/my_realm
+
 springdoc:
   swagger-ui:
     urls:
