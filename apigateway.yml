@@ -13,6 +13,9 @@ spring:
         locator:
           enabled: true
         lower-case-service-id: true
+      #      default-filters:
+      #        - TokenRelay
+      #        - RemoveRequestHeader=Cookie
       routes:
         - id: auth-service
           uri: lb://auth-service
@@ -20,26 +23,46 @@ spring:
             - Path=/auth/**
           filters:
             - RewritePath=/auth/(?<path>.*), /$\{path}
+
         - id: order-service
           uri: lb://order-service
           predicates:
             - Path=/order/**
           filters:
             - RewritePath=/order/(?<path>.*), /$\{path}
+            - AuthenticationFilter
+
         - id: user-service
           uri: lb://user-service
           predicates:
             - Path=/user/**
           filters:
             - RewritePath=/user/(?<path>.*), /$\{path}
+            - AuthenticationFilter
+
         - id: openapi
           uri: http://localhost:${server.port}
           predicates:
             - Path=/v3/api-docs/**
           filters:
             - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          gateway:
+#            provider: my-provider
+#            client-id: gateway-client-id
+#            client-secret: secret
+#            authorization-grant-type: authorization_code
+#            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+#            scope: openid,movebox_user.read,movebox_order.read
+#        provider:
+#          my-provider:
+#            issuer-uri: http://localhost:8081
 springdoc:
   swagger-ui:
+    use-root-path: true
     urls:
       - name: order
         url: /v3/api-docs/order
@@ -48,8 +71,18 @@ springdoc:
       - name: auth
         url: /v3/api-docs/auth
 
-management:
-  tracing:
-    sampling:
-      probability: 1.0
+#management:
+#  tracing:
+#    sampling:
+#      probability: 1.0
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.springframework.security.oauth2: INFO
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.boot.autoconfigure: DEBUG
 
+jwt:
+  secret: cFmTFjy5waMnFVUat26etffwim8t7RGSIyXm3y/geig=
