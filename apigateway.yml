@@ -9,16 +9,6 @@ spring:
       enabled: always
   cloud:
     gateway:
-#      globalcors:
-#        corsConfigurations:
-#          '[/**]':
-#            allowedOrigins: "http://localhost:8765"
-#            allowedHeaders: "*"
-#            allowedMethods:
-#              - GET
-#              - POST
-#              - PUT
-#              - DELETE
       discovery:
         locator:
           enabled: true
@@ -50,24 +40,21 @@ spring:
           predicates:
             - Path=/v3/api-docs/**
           filters:
-            - TokenRelay=
             - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
-
   security:
     oauth2:
       client:
         registration:
           gateway:
             provider: my-provider
-            client-id: my_client
-            client-secret: mit8MZr6911qdZjxLUfr930DA8NWMJo9
+            client-id: gateway-client-id
+            client-secret: my-secret
             authorization-grant-type: authorization_code
-            redirect-uri: "http://localhost:8765/login/oauth2/code/{registrationId}"
+            redirect-uri: "http://apigateway:8765/login/oauth2/code/{registrationId}"
             scope: openid, movebox.read
         provider:
           my-provider:
-            issuer-uri: http://localhost:8080/realms/my_realm
-
+            issuer-uri: http://auth-service:8081
 springdoc:
   swagger-ui:
     urls:
@@ -75,7 +62,7 @@ springdoc:
         url: /v3/api-docs/order
       - name: user
         url: /v3/api-docs/user
-      - name: auth
+      - name: auth-service
         url: /v3/api-docs/auth
 
 management:
