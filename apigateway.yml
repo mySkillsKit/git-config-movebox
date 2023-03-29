@@ -60,13 +60,13 @@ spring:
           gateway:
             provider: my-provider
             client-id: my_client
-            client-secret: mit8MZr6911qdZjxLUfr930DA8NWMJo9
+            client-secret: PMW73V5xK4Ehc2e96mCLq8wEPDt0rEAs
             authorization-grant-type: authorization_code
             redirect-uri: "http://localhost:8765/login/oauth2/code/{registrationId}"
             scope: openid, movebox.read
         provider:
           my-provider:
-            issuer-uri: http://localhost:8080/realms/my_realm
+            issuer-uri: http://keycloak-auth:8180/auth/realms/my-realm
 
 springdoc:
   swagger-ui:
